@@ -10,6 +10,7 @@ call virtual count method
 */
 
 #include <vector>
+#include <algorithm>
 #include <iostream>
 
 enum class type { circle, rectangle, sqare, triangle };
@@ -30,24 +31,28 @@ class Circle : public Figure
      const double pi { 3.1415 };
    public:
      Circle( double radius ): Figure { radius * radius * pi } {};
+     double getSurfaceArea() {return Figure::surfaceArea; };
 };
 
 class Rectangle : public Figure
 {
    public:  
      Rectangle( double a, double b): Figure { a * b } {};
+     double getSurfaceArea() {return Figure::surfaceArea; };
 };
 
 class Square : public Rectangle
 {
    public:
      Square( double a ): Rectangle { a, a } {};
+     double getSurfaceArea() {return Figure::surfaceArea; };
 };
 
 class Triangle : public Figure
 {
    public:
     Triangle( double a , double h ): Figure {0.5 * a * h } {};
+    double getSurfaceArea() {return Figure::surfaceArea; };
 };
 
 Figure *newFigure( type typeOfFigure, double a = 0, double b = 0 )
@@ -69,9 +74,14 @@ Figure *newFigure( type typeOfFigure, double a = 0, double b = 0 )
 
 int main()
 {
-   std::vector<Figure>* figure {};
+   std::vector<Figure*> figure;
+   double a {0};
+   double b {0};
+   std::cout << "Please write Circle radius: ";
+   std::cin >> a;
+   figure.push_back( newFigure( type::circle, a) );
 
-   std::cout << 
+   std::cout << "Surface area of circle: " << figure.at(0)->getSurfaceArea() << std::endl;
 
 
 }
