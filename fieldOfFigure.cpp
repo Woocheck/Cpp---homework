@@ -37,7 +37,7 @@ class Rectangle : public Figure
    double sideA { 0 };
    double sideB { 0 };
    public:  
-     Rectangle( double a, double b): sideA { a },  sideB { 0 } {};
+     Rectangle( double a, double b): sideA { a },  sideB { b } {};
      double getSurfaceArea() {return sideA * sideB; };
 };
 
@@ -60,55 +60,35 @@ class Triangle : public Figure
     double getSurfaceArea() {return 0.5 * base * height; };
 };
 
+
 Figure *newFigure( Type typeOfFigure, double a, double b = 0 );
-double printSurfaceAreaFor( Type typeOfFigure, std::vector<Figure*> figure );
-double choseGetSurfaceMethodFor( Type typeOfFigure, std::vector<Figure*> figure );
+void getFiguresDimensions( std::vector<Figure*>& figure );
+void printSurfaceAreaFor( Type typeOfFigure, std::vector<Figure*> figure );
+
+bool isFigureChosenCorrect( int );
+
 
 int main()
 {
    std::vector<Figure*> figure;
-   double a {0};
-   double b {0};
-
-   std::cout << "Please write Circle radius: ";
-   std::cin >> a;
-   figure.push_back( newFigure( Type::circle, a) );
-
-   std::cout << "Please write Rectangle side a :";
-   std::cin >> a;
-   std::cout <<" and b"; 
-   std::cin >> b;
-   figure.push_back( newFigure( Type::rectangle, a ,b) );
-
-   std::cout << "Please write Sqare side a: ";
-   std::cin >> a;
-   figure.push_back( newFigure( Type::sqare, a) );
-
-   std::cout << "Please write Triangle the base :";
-   std::cin >> a;
-   std::cout <<" and the heigh :"; 
-   std::cin >> b;
-   figure.push_back( newFigure( Type::triangle, a ,b) );
-
+   
+   getFiguresDimensions( figure );
+   
+   std::vector<Type> chosenFigure { Type::circle, Type::rectangle, Type::sqare, Type::triangle };
+   int a = 0;
+   
    std::cout << "Please chose figure to calculate surface area." << std::endl;
    std::cout << "(1 - circle, 2 - rectangle, 3 - square, 4 - triangle)" << std::endl; 
-   a = 0;
-   Type chosenFigure {};
+   
    std::cin >> a;
-   if( a == 1) 
-    chosenFigure = Type::circle;
-   else if( a == 2 )
-    chosenFigure = Type::rectangle;
-   else if( a == 3 )
-    chosenFigure = Type::sqare;
-   else if( a == 4 )
-    chosenFigure = Type::triangle;
+   
+   if( isFigureChosenCorrect( a ) )
+    printSurfaceAreaFor( chosenFigure.at( a ), figure ) ;
    else
     std::cout << "You have to choose a number between 1 and 4." << std::endl;
-   
-   printSurfaceAreaFor( chosenFigure, figure ) ;
-  
+
 };
+
 
 Figure *newFigure( Type typeOfFigure, double a, double b = 0 )
 {
@@ -127,7 +107,35 @@ Figure *newFigure( Type typeOfFigure, double a, double b = 0 )
     }
 };
 
-double printSurfaceAreaFor( Type typeOfFigure, std::vector<Figure*> figure )
+
+void getFiguresDimensions( std::vector<Figure*>& figure )
+{
+   double a {0};
+   double b {0};
+
+   std::cout << "Please write Circle radius: ";
+   std::cin >> a;
+   figure.push_back( newFigure( Type::circle, a) );
+
+   std::cout << "Please write Rectangle side a :";
+   std::cin >> a;
+   std::cout <<" and b: "; 
+   std::cin >> b;
+   figure.push_back( newFigure( Type::rectangle, a ,b) );
+
+   std::cout << "Please write Sqare side a: ";
+   std::cin >> a;
+   figure.push_back( newFigure( Type::sqare, a) );
+
+   std::cout << "Please write Triangle the base :";
+   std::cin >> a;
+   std::cout <<" and the heigh :"; 
+   std::cin >> b;
+   figure.push_back( newFigure( Type::triangle, a ,b) );
+   
+};
+
+void printSurfaceAreaFor( Type typeOfFigure, std::vector<Figure*> figure )
 {
   for( auto chosenFigure : figure )
   {
@@ -143,3 +151,7 @@ double printSurfaceAreaFor( Type typeOfFigure, std::vector<Figure*> figure )
 
 };
 
+bool isFigureChosenCorrect( int a )
+{
+  return ( a == std::clamp( a, 1, 4 ) );
+};
