@@ -83,7 +83,7 @@ int main()
    std::cin >> a;
    
    if( isFigureChosenCorrect( a ) )
-    printSurfaceAreaFor( chosenFigure.at( a ), figure ) ;
+    printSurfaceAreaFor( chosenFigure.at( a - 1 ), figure ) ; 
    else
     std::cout << "You have to choose a number between 1 and 4." << std::endl;
 
