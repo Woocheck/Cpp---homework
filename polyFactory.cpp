@@ -10,6 +10,7 @@ print out properties of all elements
 */
 
 #include <vector>
+#include <memory>
 #include <iostream>
 
 enum class material { wood, resistor, capacitor, sandPaper };
@@ -20,11 +21,12 @@ class WorkshopMaterial
      std::string materialName;
 
    public:
-     WorkshopMaterial(){}
+     WorkshopMaterial(){};
      virtual void printName() = 0;
-     void setMaterialName( std::string name ) { materialName = name; };
+     void setMaterialName( const std::string& name ) { materialName = name; };
      std::string getMaterialName() { return materialName; };
-     virtual void specifyTheDetails( std::string detail ) = 0;
+     virtual void specifyTheDetails( const std::string& detail ) = 0;
+     static WorkshopMaterial *newMaterial( material typeOfMaterial );
 };
 
 
@@ -41,8 +43,8 @@ class Wood : public WorkshopMaterial
      void printName() {
         std::cout << WorkshopMaterial::getMaterialName() << " " 
                   << sortOfWood << std::endl; };
-      void specifyTheDetails( std::string detail ) { sortOfWood = detail; };
-
+      void specifyTheDetails( const std::string& detail ) override { sortOfWood = detail; };
+      
 };
 
 class ElectronicPart : public WorkshopMaterial
@@ -54,7 +56,7 @@ class ElectronicPart : public WorkshopMaterial
 
    public:
      virtual void printName() = 0;
-     virtual void specifyTheDetails( std::string detail ) = 0;
+     virtual void specifyTheDetails( const std::string& detail ) = 0;
 };
 
 class SandPaper : public WorkshopMaterial
@@ -67,14 +69,14 @@ class SandPaper : public WorkshopMaterial
 
    public:
      SandPaper(){};
-     SandPaper ( std::string matNam )
+     SandPaper ( const std::string& matNam )
      {
         WorkshopMaterial::setMaterialName( matNam );
      }
      void printName() {
         std::cout << WorkshopMaterial::getMaterialName() << " " 
                   << typesOfAbrasive << std::endl; };
-     void specifyTheDetails( std::string detail ) { typesOfAbrasive = detail; };
+     void specifyTheDetails( const std::string& detail ) override { typesOfAbrasive = detail; };
 };
 
 class Resistor : public ElectronicPart 
@@ -86,14 +88,14 @@ class Resistor : public ElectronicPart
 
    public:
      Resistor (){};
-     Resistor ( std::string matNam )
+     Resistor ( const std::string& matNam )
      {
         WorkshopMaterial::setMaterialName( matNam );
      }
      void printName() {
         std::cout << WorkshopMaterial::getMaterialName() << " " 
                   << nominalResistance << " ohm" << std::endl; }
-      void specifyTheDetails( std::string detail ) { nominalResistance = std::stof( detail ); };
+      void specifyTheDetails( const std::string& detail ) override { nominalResistance = std::stof( detail ); };
 };
 
 class Capacitor : public ElectronicPart
@@ -104,29 +106,29 @@ class Capacitor : public ElectronicPart
    
    public:
      Capacitor(){};
-     Capacitor( std::string matNam )
+     Capacitor( const std::string& matNam )
      {
         WorkshopMaterial::setMaterialName( matNam );
      }
      void printName() {
         std::cout << WorkshopMaterial::getMaterialName() << " " 
                   << nominalCapacity << " farads" << std::endl; }
-     void specifyTheDetails( std::string detail ) { nominalCapacity = std::stof( detail ); };
+     void specifyTheDetails( const std::string& detail ) override { nominalCapacity = std::stof( detail ); };
 };
 
-WorkshopMaterial *newMaterial( material typeOfMaterial )
+WorkshopMaterial* WorkshopMaterial::newMaterial( material typeOfMaterial )
 {
    switch (typeOfMaterial) {
     case material::wood :
         return new Wood( "Wood" );
     case material::sandPaper :
-        return new SandPaper( "Sandpaper");
+        return new SandPaper( "Sandpaper" );
     case material::resistor :
         return new Resistor( "Resistor" );
     case material::capacitor :
         return new Capacitor("Capacitor");
     default:
-        return new Wood( "empty");
+        return NULL;
     }
 };
 
@@ -134,10 +136,10 @@ int main()
 {
    std::vector<WorkshopMaterial*> materials;
 
-   materials.push_back( newMaterial( material::wood ) );
-   materials.push_back( newMaterial( material::sandPaper ) );
-   materials.push_back( newMaterial( material::resistor ) );
-   materials.push_back( newMaterial( material::capacitor ) );
+   materials.push_back( WorkshopMaterial::newMaterial( material::wood ) );
+   materials.push_back( WorkshopMaterial::newMaterial( material::sandPaper ) );
+   materials.push_back( WorkshopMaterial::newMaterial( material::resistor ) );
+   materials.push_back( WorkshopMaterial::newMaterial( material::capacitor ) );
 
    for(auto element : materials )
    {
